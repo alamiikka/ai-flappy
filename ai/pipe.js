@@ -2,12 +2,12 @@ const fancy = true;
 
 function pipe() {
     this.spacing = 145;
-    this.top = random(height / 9, 3 / 4 * height);
+    this.top = random(0 + (height / 10), height - this.spacing - (height / 10));
     this.bottom = height - (this.top + this.spacing);
     this.x = width;
     this.w = 80;
     this.speed = 5.5;
-    this.givenScore = false;
+    this.hasGivenScore = false;
 
     this.checkHit = flappy => {
 
@@ -15,31 +15,42 @@ function pipe() {
             return false;
         }
 
-        // hit checks
-        //   1
-        //4 ball 2
-        //   3
-
-        const flapSize = flappy.size / 2;
-
-        //1 & 3
-        if (flappy.y - flapSize < this.top ||
-            flappy.y + flapSize > height - this.bottom) {
-            if (flappy.x > this.x && flappy.x < this.x + this.w) {
-                return true;
-            }
-        }
-
-        //2 & 4
         if (flappy.y < this.top ||
             flappy.y > height - this.bottom) {
-            if ((flappy.x + flapSize > this.x &&
-                    flappy.x + flapSize < this.x + this.w) ||
-                (flappy.x - flapSize > this.x &&
-                    flappy.x - flapSize < this.x + this.w)) {
+            if (flappy.x > this.x &&
+                flappy.x < this.x + this.w) {
                 return true;
             }
         }
+
+
+        // AI simplify hitbox to one pixel
+        //
+        // // hit checks
+        // //   1
+        // //4 ball 2
+        // //   3
+
+        // const flapSize = flappy.size / 2;
+
+        // //1 & 3
+        // if (flappy.y - flapSize < this.top ||
+        //     flappy.y + flapSize > height - this.bottom) {
+        //     if (flappy.x > this.x && flappy.x < this.x + this.w) {
+        //         return true;
+        //     }
+        // }
+
+        // //2 & 4
+        // if (flappy.y < this.top ||
+        //     flappy.y > height - this.bottom) {
+        //     if ((flappy.x + flapSize > this.x &&
+        //             flappy.x + flapSize < this.x + this.w) ||
+        //         (flappy.x - flapSize > this.x &&
+        //             flappy.x - flapSize < this.x + this.w)) {
+        //         return true;
+        //     }
+        // }
 
         return false;
     }
