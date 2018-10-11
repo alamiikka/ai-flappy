@@ -8,8 +8,14 @@ function flap() {
     this.lift = -12;
     this.velocity = 0;
 
+    this.dead = false;
+
     this.render = () => {
-        fill(255);
+        if (this.dead) {
+            fill(255, 0, 0);
+        } else {
+            fill(255);
+        }
         ellipse(this.x, this.y, this.size, this.size)
     }
 
@@ -20,7 +26,9 @@ function flap() {
     this.update = () => {
         this.velocity += this.gravity;
         this.y += this.velocity;
+
         // this.y = mouseY;
+
         if (this.y + this.size / 2 > height) {
 
             this.y = height - this.size / 2;
@@ -32,5 +40,9 @@ function flap() {
             this.velocity = 0;
 
         }
+    }
+
+    this.dieded = () => {
+        this.dead = true;
     }
 }

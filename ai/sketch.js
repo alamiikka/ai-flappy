@@ -12,14 +12,12 @@ setup = () => {
 draw = () => {
   background(0);
   for (let p of pipes.reverse()) {
-    console.log(score);
-
     p.render();
     p.update();
 
     if (p.checkHit(flappy)) {
+      flappy.dieded();
       noLoop();
-      console.log("DED");
       // setTimeout(() => {
       //   reset();
       // }, 2000);
@@ -50,6 +48,7 @@ draw = () => {
 }
 
 reset = () => {
+  noLoop();
   flappy = null;
   pipes.length = 0;
   score = 0;
@@ -60,13 +59,13 @@ reset = () => {
   frameCount = 0;
 
   redraw();
-  setTimeout(() => {
-    loop();
-  }, 1000);
+  loop();
 }
 
 keyPressed = () => {
   if (key === " ") {
     flappy.up();
+  } else if (key === "r") {
+    reset();
   }
 }
