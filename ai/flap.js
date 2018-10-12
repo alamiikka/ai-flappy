@@ -1,10 +1,10 @@
-function flap() {
+function flap(brains) {
     this.y = height / 2;
     this.x = width / 4;
 
-    this.r = random(10,255);
-    this.b = random(10,255);
-    this.g = random(10,255);
+    this.r = random(10, 255);
+    this.b = random(10, 255);
+    this.g = random(10, 255);
 
     this.size = 32;
 
@@ -12,7 +12,16 @@ function flap() {
     this.lift = -12;
     this.velocity = 0;
 
-    this.birdBrain = new NeuralNetwork(4, 4, 1);
+    this.score = 0;
+    this.fitness = 0;
+
+    this.birdBrain = null;
+
+    if (brains) {
+        this.birdBrain = brains.copy();
+    } else {
+        this.birdBrain = new NeuralNetwork(4, 4, 1);
+    }
 
     this.dead = false;
 
@@ -49,6 +58,7 @@ function flap() {
     }
 
     this.update = () => {
+        this.score++;
         this.velocity += this.gravity;
         this.y += this.velocity;
 
@@ -67,7 +77,12 @@ function flap() {
         }
     }
 
+    this.mutate = (amount) => {
+        this.birdBrain.mutate(x => x * amount);
+    }
+
     this.dieded = () => {
         this.dead = true;
     }
+
 }

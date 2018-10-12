@@ -1,13 +1,18 @@
-const POPULATION = 300;
+const POPULATION = 10;
+let generation = 0;
 let flappies = [];
+let savedFlappies = [];
 let pipes = [];
 let score = 0;
+let highScore = 0;
+let looping = true;
 
 setup = () => {
   createCanvas(800, 600);
-  [...Array(POPULATION)].map(() => {
-    flappies.push(new flap());
-  })
+  // [...Array(POPULATION)].map(() => {
+  //   flappies.push(new flap());
+  // });
+  flappies = [...Array(POPULATION)].fill().map(() => new flap());
   pipes.push(new pipe());
 }
 
@@ -42,10 +47,16 @@ draw = () => {
     f.render();
   }
 
-  flappies = flappies.filter(flap => {
-    return !closestPipe.checkHit(flap);
-  });
+  // flappies = flappies.filter(flap => {
+  //   return !closestPipe.checkHit(flap);
+  // });
 
+  for (let i = 0; i < flappies.length; i++) {
+    if (closestPipe.checkHit(flappies[i])) {
+      savedFlappies.push(flappies.splice(i, 1)[0]);
+      i--;
+    }
+  }
 
   if (pipes[0].isOffscreen()) {
     pipes.shift();
@@ -55,43 +66,42 @@ draw = () => {
     pipes.push(new pipe());
   }
 
-  // score text
   textSize(30);
   strokeWeight(0);
-  fill(0);
-  text(score, 10, 31);
   fill(255);
-  text(score, 10, 30);
 
-  fill(0);
-  text(flappies.length, 10, height - 10);
-  fill(255);
-  text(flappies.length, 10, height - 10);
+  // score
+  text("Score: " + score, 10, 30);
+
+  // highscore
+  text("High: " + highScore, 10, 70);
+
+  // alive flaps
+  text("Alive: " + flappies.length, 10, height - 10);
+
+  //generation
+  text("Gen: " + generation, 10, height - 50);
 
   if (flappies.length === 0) {
-    noLoop();
+    allDed();
   }
 }
 
-reset = () => {
+allDed = () => {
   noLoop();
-  flappy = null;
-  pipes.length = 0;
-  score = 0;
+  score > highScore ? highScore = score : null;
 
-  flappy = new flap();
+  score = 0;
+  frameCount = 0;
+  pipes.length = 0;
   pipes.push(new pipe());
 
-  frameCount = 0;
-
-  redraw();
-  loop();
+  generation++;
+  nextGen();
+  //loop();
 }
 
-// keyPressed = () => {
-//   if (key === " ") {
-//     flappy.up();
-//   } else if (key === "r") {
-//     reset();
-//   }
-// }
+mousePressed = () => {
+  looping ? noLoop() : loop();
+  looping = !looping;
+}
