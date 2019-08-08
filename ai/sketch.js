@@ -1,4 +1,5 @@
-const POPULATION = 10;
+const POPULATION = 300;
+const ELITE = Math.floor(POPULATION * 0.1);
 let generation = 0;
 let flappies = [];
 let savedFlappies = [];
@@ -9,17 +10,17 @@ let looping = true;
 
 setup = () => {
   createCanvas(800, 600);
-  // [...Array(POPULATION)].map(() => {
-  //   flappies.push(new flap());
-  // });
   flappies = [...Array(POPULATION)].fill().map(() => new flap());
-  pipes.push(new pipe());
-}
+  pipes.push(new pipe(true));
+};
 
 draw = () => {
   background(0);
 
-  let closestPipe = pipes[0].x + pipes[0].w < this.x ? pipes[1] : pipes[0];
+  let closestPipe = pipes[0].x + pipes[0].w < width / 4 ? pipes[1] : pipes[0];
+  let ccc = pipes[0].x + pipes[0].w < width / 4 ? 1 : 0;
+  pipes[0].closestPipe = false;
+  pipes[ccc].closestPipe = true;
 
   for (let p of pipes) {
     p.render();
@@ -28,18 +29,7 @@ draw = () => {
       p.hasGivenScore = true;
       score++;
     }
-    // if (p.giveScore(flappy)) {
-    //   score++;
-    // }
   }
-
-  // if (closestPipe.checkHit(flappy)) {
-  //   flappy.dieded();
-  //   noLoop();
-  //   // setTimeout(() => {
-  //   //   reset();
-  //   // }, 2000);
-  // }
 
   for (let f of flappies) {
     f.useYourHead(pipes, closestPipe);
@@ -47,12 +37,13 @@ draw = () => {
     f.render();
   }
 
-  // flappies = flappies.filter(flap => {
-  //   return !closestPipe.checkHit(flap);
-  // });
-
   for (let i = 0; i < flappies.length; i++) {
     if (closestPipe.checkHit(flappies[i])) {
+      if (closestPipe.firstPipe) {
+        flappies[i].tyhmaKuSaapas = true;
+      } else {
+        flappies[i].tyhmaKuSaapas = false;
+      }
       savedFlappies.push(flappies.splice(i, 1)[0]);
       i--;
     }
@@ -63,45 +54,47 @@ draw = () => {
   }
 
   if (frameCount % 75 === 0) {
-    pipes.push(new pipe());
+    pipes.push(new pipe(false));
   }
 
   textSize(30);
   strokeWeight(0);
   fill(255);
 
-  // score
   text("Score: " + score, 10, 30);
-
-  // highscore
   text("High: " + highScore, 10, 70);
-
-  // alive flaps
   text("Alive: " + flappies.length, 10, height - 10);
-
-  //generation
   text("Gen: " + generation, 10, height - 50);
 
   if (flappies.length === 0) {
     allDed();
   }
-}
+};
 
 allDed = () => {
   noLoop();
-  score > highScore ? highScore = score : null;
+  score > highScore ? (highScore = score) : null;
 
   score = 0;
   frameCount = 0;
   pipes.length = 0;
-  pipes.push(new pipe());
+  pipes.push(new pipe(true));
 
   generation++;
   nextGen();
-  //loop();
-}
+  loop();
+};
 
 mousePressed = () => {
   looping ? noLoop() : loop();
   looping = !looping;
-}
+};
+
+keyPressed = () => {
+  if (keyCode === 75) {
+    for (let i = 0; i < flappies.length; i++) {
+      savedFlappies.push(flappies.splice(i, 1)[0]);
+      i--;
+    }
+  }
+};

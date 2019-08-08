@@ -1,6 +1,6 @@
 const fancy = true;
 
-function pipe() {
+function pipe(firstPipe) {
     this.spacing = 145;
     this.top = random(0 + (height / 10), height - this.spacing - (height / 10));
     this.bottom = height - (this.top + this.spacing);
@@ -8,6 +8,8 @@ function pipe() {
     this.w = 80;
     this.speed = 5.5;
     this.hasGivenScore = false;
+    this.firstPipe = firstPipe;
+    this.closestPipe = false;
 
     this.checkHit = flappy => {
 
@@ -23,35 +25,6 @@ function pipe() {
             }
         }
 
-
-        // AI simplify hitbox to one pixel
-        //
-        // // hit checks
-        // //   1
-        // //4 ball 2
-        // //   3
-
-        // const flapSize = flappy.size / 2;
-
-        // //1 & 3
-        // if (flappy.y - flapSize < this.top ||
-        //     flappy.y + flapSize > height - this.bottom) {
-        //     if (flappy.x > this.x && flappy.x < this.x + this.w) {
-        //         return true;
-        //     }
-        // }
-
-        // //2 & 4
-        // if (flappy.y < this.top ||
-        //     flappy.y > height - this.bottom) {
-        //     if ((flappy.x + flapSize > this.x &&
-        //             flappy.x + flapSize < this.x + this.w) ||
-        //         (flappy.x - flapSize > this.x &&
-        //             flappy.x - flapSize < this.x + this.w)) {
-        //         return true;
-        //     }
-        // }
-
         return false;
     }
 
@@ -62,9 +35,15 @@ function pipe() {
         rect(this.x, 0, this.w, this.top);
         rect(this.x, height - this.bottom, this.w, this.bottom);
         //TODO gradient
-        fill(0, 255, 0);
-        rect(this.x + this.w / 7, 0, this.w / 7, this.top);
-        rect(this.x + this.w / 7, height - this.bottom, this.w / 7, this.bottom);
+        if(this.closestPipe){
+            fill(50, 255, 50);
+            rect(this.x + this.w / 7, 0, this.w / 7, this.top);
+            rect(this.x + this.w / 7, height - this.bottom, this.w / 7, this.bottom);
+        } else {
+            fill(0, 220, 0);
+            rect(this.x + this.w / 7, 0, this.w / 7, this.top);
+            rect(this.x + this.w / 7, height - this.bottom, this.w / 7, this.bottom);
+        }
     }
 
     this.update = () => {
